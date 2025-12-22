@@ -103,28 +103,6 @@
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<FontString name="AccountLoginServerCredit" inherits="GlueFontNormalHuge" justifyH="CENTER">
-							<Size>
-								<AbsDimension x="800" y="0"/>
-							</Size>
-							<Anchors>
-								<Anchor point="BOTTOM">
-									<Offset>
-										<AbsDimension x="0" y="40"/>
-									</Offset>
-								</Anchor>
-							</Anchors>
-							<FontHeight>
-								<AbsValue val="28"/>
-							</FontHeight>
-							<Color r="1.0" g="0.82" b="0.0"/>
-							<Shadow>
-								<Offset>
-									<AbsDimension x="3" y="-3"/>
-								</Offset>
-								<Color r="0" g="0" b="0" a="1"/>
-							</Shadow>
-						</FontString>
 						<FontString name="AccountLoginRealmName" inherits="GlueFontDisableSmall" justifyH="CENTER" hidden="true">
 							<Size>
 								<AbsDimension x="256" y="0"/>
