@@ -1,0 +1,165 @@
+{
+	"fileDataID": 4620425,
+	"textures": [
+		{
+			"fileDataID": 4624244,
+			"file": "fire_flamelicks_dissolvefbs_blend.blp"
+		},
+		{
+			"fileDataID": 4624245,
+			"file": "white8x8.blp"
+		},
+		{
+			"fileDataID": 4624246,
+			"file": "ember_chunky_blankmorerotation_a.blp"
+		},
+		{
+			"fileDataID": 4624247,
+			"file": "smoke_puffy_mask_blendadd.blp"
+		},
+		{
+			"fileDataID": 4624248,
+			"file": "7fx_energyscroll_fire_a.blp"
+		},
+		{
+			"fileDataID": 4624249,
+			"file": "smoke_generic_paintymask01_blend.blp"
+		},
+		{
+			"fileDataID": 4624250,
+			"file": "8fx_explosionsmoke_a.blp"
+		},
+		{
+			"fileDataID": 4620831,
+			"file": "ui_mechagnome_playershadow.blp"
+		},
+		{
+			"fileDataID": 4620699,
+			"file": "ui_dracthyr_01.blp"
+		},
+		{
+			"fileDataID": 4620700,
+			"file": "ui_dracthyr_02.blp"
+		},
+		{
+			"fileDataID": 4620701,
+			"file": "ui_dracthyr_03.blp"
+		},
+		{
+			"fileDataID": 4620702,
+			"file": "ui_dracthyr_04.blp"
+		},
+		{
+			"fileDataID": 4620703,
+			"file": "ui_dracthyr_05.blp"
+		},
+		{
+			"fileDataID": 4620704,
+			"file": "ui_dracthyr_06.blp"
+		},
+		{
+			"fileDataID": 4620705,
+			"file": "ui_dracthyr_07.blp"
+		},
+		{
+			"fileDataID": 4620706,
+			"file": "ui_dracthyr_08.blp"
+		},
+		{
+			"fileDataID": 4620707,
+			"file": "ui_dracthyr_09.blp"
+		},
+		{
+			"fileDataID": 4620708,
+			"file": "ui_dracthyr_11.blp"
+		},
+		{
+			"fileDataID": 4620710,
+			"file": "ui_dracthyr_13.blp"
+		},
+		{
+			"fileDataID": 4620711,
+			"file": "ui_dracthyr_14.blp"
+		},
+		{
+			"fileDataID": 4620712,
+			"file": "ui_dracthyr_15.blp"
+		},
+		{
+			"fileDataID": 4620713,
+			"file": "ui_dracthyr_10.blp"
+		},
+		{
+			"fileDataID": 4620709,
+			"file": "ui_dracthyr_12.blp"
+		},
+		{
+			"fileDataID": 4628915,
+			"file": "10xp_waterfall_top01.blp"
+		},
+		{
+			"fileDataID": 4628916,
+			"file": "10xp_waterfall_mod2x_top.blp"
+		},
+		{
+			"fileDataID": 4628917,
+			"file": "10xp_waterfall_bottom01.blp"
+		},
+		{
+			"fileDataID": 4628918,
+			"file": "10xp_waterfall_mod2x_bottom.blp"
+		},
+		{
+			"fileDataID": 4628919,
+			"file": "10xp_waterfall_base01.blp"
+		},
+		{
+			"fileDataID": 4628920,
+			"file": "10xp_waterfall_mod2x_main.blp"
+		},
+		{
+			"fileDataID": 4624251,
+			"file": "7fx_alphamask_glow.blp"
+		},
+		{
+			"fileDataID": 4624252,
+			"file": "10dg_dragon_colors.blp"
+		},
+		{
+			"fileDataID": 4624253,
+			"file": "10dg_dragon_brazier02.blp"
+		},
+		{
+			"fileDataID": 4624254,
+			"file": "armorreflect6.blp"
+		},
+		{
+			"fileDataID": 4624255,
+			"file": "10gl_gnoll_campfire_campfire_fire01.blp"
+		},
+		{
+			"fileDataID": 4624256,
+			"file": "10gl_gnoll_campfire_campfire_fire01_emissive.blp"
+		}
+	],
+	"skins": [
+		{
+			"fileDataID": 4620714,
+			"file": "ui_dracthyr00.skin"
+		}
+	],
+	"lodSkins": [
+		{
+			"fileDataID": 4620833,
+			"file": "ui_dracthyr_lod01.skin"
+		},
+		{
+			"fileDataID": 4624257,
+			"file": "ui_dracthyr_lod02.skin"
+		},
+		{
+			"fileDataID": 4624258,
+			"file": "ui_dracthyr_lod03.skin"
+		}
+	]
+}

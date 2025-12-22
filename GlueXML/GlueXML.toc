@@ -1,0 +1,70 @@
+# Do not delete the following line!
+## Interface: 30300
+..\SharedXML\AtlasStorage.lua
+..\SharedXML\MixIn.lua
+..\SharedXML\Util.lua
+..\SharedXML\C_Texture.lua
+..\SharedXML\C_TimerAugment.lua
+..\SharedXML\AnchorUtil.xml
+
+GlobalStrings.lua
+Constants.lua
+Fonts.xml
+FontStyles.xml
+Localization.xml
+..\SharedXML\SharedFontStyles.xml
+..\SharedXML\SharedConstants.lua
+..\SharedXML\SharedTooltipTemplates.lua
+# add new modules below here
+
+..\SharedXML\SharedExtendedMethods.lua
+
+..\SharedXML\SharedUIPanelTemplates.xml
+..\SharedXML\ModelFrames.xml
+
+..\SharedXML\HybridScrollFrame.lua
+..\SharedXML\HybridScrollFrame.xml
+
+##DebugHook.lua
+GlueStrings.lua
+GlueFonts.xml
+GlueFontStyles.xml
+GlueLocalization.xml
+## add new files after here
+
+GlueBasicControls.xml
+GlueParent.xml
+GlueButtons.xml
+GlueTemplates.xml
+GlueDialog.xml
+GlueDropDownMenu.xml
+GlueTooltip.xml
+GlueSplash.xml
+RealmList.xml
+AddonList.xml
+AccountLogin.xml
+CharacterSelect.xml
+CharacterCreate.xml
+PatchDownload.xml
+MovieFrame.xml
+RealmWizard.xml
+CreditsFrame.xml
+SecurityMatrix.xml
+OptionsFrameTemplates.xml
+OptionsPanelTemplates.xml
+TrialConvert.xml
+VideoOptionsFrame.xml
+VideoOptionsPanels.xml
+AudioOptionsFrame.xml
+AudioOptionsPanels.xml
+OptionsSelect.xml
+##CameraSelect.xml
+CharacterInfo.lua
+CharacterCreate.lua
+
+# custom modules
+XML_TXXUI.xml
+XML_IXXUI.xml
+
+# add new modules above here
+LocalizationPost.xml
