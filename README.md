@@ -84,6 +84,4 @@ Las siguientes acciones están **estrictamente prohibidas**:
 - **Modificar este código o crear trabajos derivados a partir del mismo**
 - Re-subir este proyecto bajo otro nombre o autoría
 
-El uso de esta interfaz está permitido **únicamente en su forma original, sin modificaciones**.
-
 ---
