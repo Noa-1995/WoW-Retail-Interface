@@ -57,12 +57,26 @@ Se enfoca en **elementos modernos**, **restricciones por clase** y **sistemas pe
 
 **EN:**  
 This interface is **NOT for sale**.  
-Its use is **completely free** for personal and private server projects.  
-Commercial use or resale is not permitted.
+Its use is **completely free** for personal and private server projects.
+
+The following actions are **strictly prohibited**:
+- Selling or redistributing this interface for profit
+- Commercial use of any kind
+- **Modifying this code or creating derivative works based on it**
+- Reuploading this project under a different name or authorship
+
+Use of this interface is allowed **only in its original, unmodified form**.
 
 **ES:**  
 Esta interfaz **NO está a la venta**.  
-Su uso es **completamente gratuito** para proyectos personales y servidores privados.  
-No se permite su venta ni uso comercial.
+Su uso es **completamente gratuito** para proyectos personales y servidores privados.
+
+Las siguientes acciones están **estrictamente prohibidas**:
+- Vender o redistribuir esta interfaz con fines comerciales
+- Cualquier tipo de uso comercial
+- **Modificar este código o crear trabajos derivados a partir del mismo**
+- Re-subir este proyecto bajo otro nombre o autoría
+
+El uso de esta interfaz está permitido **únicamente en su forma original, sin modificaciones**.
 
 ---
