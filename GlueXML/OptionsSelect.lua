@@ -1,5 +1,6 @@
+-- ============================================================================
 -- Autora: Noa
-
+-- ============================================================================
 function OptionsSelectFrame_Hide()
 	PlaySound("gsLoginChangeRealmCancel");
 	OptionsSelectFrame:Hide();

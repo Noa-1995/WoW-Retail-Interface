@@ -609,7 +609,7 @@
     					</Anchors>
     					<Scripts>
     					    <OnClick>
-    					        LaunchURL("https://wow-titan.com/");
+    					        LaunchURL("you/link");
     					    </OnClick>
     					</Scripts>
 					</Button>

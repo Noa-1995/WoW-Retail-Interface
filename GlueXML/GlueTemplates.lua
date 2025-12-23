@@ -1,5 +1,6 @@
+-- ============================================================================
 -- Autora: Noa
-
+-- ============================================================================
 function GlueScrollFrameTemplate_OnMouseWheel(self, value, scrollBar)
 	scrollBar = scrollBar or _G[self:GetName() .. "ScrollBar"];
 	if ( value > 0 ) then

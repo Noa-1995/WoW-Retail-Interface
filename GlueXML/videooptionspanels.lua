@@ -1,5 +1,6 @@
--- [[ Autora: Noa ]] --
-
+-- ============================================================================
+-- Autora: Noa
+-- ============================================================================
 -- if you change something here you probably want to change the frame version too
 
 local OPTIONS_FARCLIP_MIN = 177;

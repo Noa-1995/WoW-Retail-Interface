@@ -1,5 +1,6 @@
--- [[ Autor: Anonymous ]] --
-
+-- ============================================================================
+-- Autora: Noa
+-- ============================================================================
 -- AUTOMATISCH GENERIERT. NICHT BEARBEITEN. VERWENDE DIE TABELLENKALKULATION UND EXPORTIERE / GENERIERE MIT SKRIPTEN
 -- GENERADO AUTOMÁTICAMENTE. NO EDITAR. USA LA HOJA DE CÁLCULO Y EXPORTA / GENERA USANDO SCRIPTS
 -- AUTO-GÉNÉRÉ. NE PAS MODIFIER. UTILISEZ LE TABLEUR ET EXPORTEZ / GÉNÉREZ EN UTILISANT DES SCRIPTS
