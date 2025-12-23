@@ -33,11 +33,18 @@ Se enfoca en **elementos modernos**, **restricciones por clase** y **sistemas pe
 - Retail-inspired logic adapted to 3.3.5
 - Event-based systems
 
-### 🌐 Localization
-- Full support for:
-  - 🇺🇸 English (enUS)
-  - 🇪🇸 Spanish (esES / esMX)
-- Some texts may require manual translation
+### 🌐 Available Languages | Idiomas Disponibles
+
+This project currently supports the following WoW locales:
+- enUS (English)
+- deDE (Deutsch)
+- esES (Español - España)
+- esMX (Español - Latinoamérica)
+- frFR (Français)
+- ruRU (Русский)
+
+Other languages are not supported at this time.
+Some texts may require manual translation.
 
 ---
 
@@ -76,7 +83,5 @@ Las siguientes acciones están **estrictamente prohibidas**:
 - Cualquier tipo de uso comercial
 - **Modificar este código o crear trabajos derivados a partir del mismo**
 - Re-subir este proyecto bajo otro nombre o autoría
-
-El uso de esta interfaz está permitido **únicamente en su forma original, sin modificaciones**.
 
 ---
