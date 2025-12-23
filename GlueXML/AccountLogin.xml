@@ -141,7 +141,7 @@
 						<Scripts>
 							<OnClick>
 								PlaySound("gsLoginNewAccount");
-								LaunchURL("https://www.facebook.com/profile.php?id=61582752418502&amp;locale=es_LA");
+								LaunchURL("Link");
 							</OnClick>
 						</Scripts>
 						<NormalTexture file="Interface\Glues\Common\Red\FbookIcon"/>
@@ -156,7 +156,7 @@
 						<Scripts>
 							<OnClick>
 								PlaySound("gsLoginNewAccount");
-								LaunchURL("https://www.tiktok.com/@uwu.2263");
+								LaunchURL("Link");
 							</OnClick>
 						</Scripts>
 						<NormalTexture file="Interface\Glues\Common\Red\TikTokIcon"/>
@@ -171,7 +171,7 @@
 						<Scripts>
 							<OnClick>
 								PlaySound("gsLoginNewAccount");
-								LaunchURL("https://www.youtube.com/@wowtitan");
+								LaunchURL("Link");
 							</OnClick>
 						</Scripts>
 						<NormalTexture file="Interface\Glues\Common\Red\YTubeIcon"/>
@@ -186,7 +186,7 @@
 						<Scripts>
 							<OnClick>
 								PlaySound("gsLoginNewAccount");
-								LaunchURL("https://discord.gg/cZ94kYbE");
+								LaunchURL("Link");
 							</OnClick>
 						</Scripts>
 						<NormalTexture file="Interface\Glues\Common\Red\DiscordIcon"/>
