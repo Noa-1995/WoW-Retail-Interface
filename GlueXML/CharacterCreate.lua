@@ -64,20 +64,13 @@ CLASS_ICON_TCOORDS = {
 	["DEATHKNIGHT"]	= {0.576660156, 0.639160156, 0.872070313, 1.000000000},
 };
 
-local ALLIANCE_RACES = {1, 2, 3, 4, 5};
-local HORDE_RACES = {6, 7, 8, 9, 10};
-
-local function GetCurrentRaceName()
-    local raceID = GetSelectedRace()
-    local raceNames = {
-        [1] = "Humano", [2] = "Enano",  [3] = "Elfo de la noche", [4] = "Gnomo", [5] = "Draenei", 
-        [6] = "Orco", [7] = "No-muerto", [8] = "Tauren", [9] = "Trol", [10] = "Elfo de sangre"
-    }
-    return raceNames[raceID] or "Humano"
+if not _G.ALLIANCE_RACES then
+    _G.ALLIANCE_RACES = {1, 2, 3, 4, 5}
 end
 
-local AllianceRaces = {"Humano", "Enano", "Elfo de la noche", "Gnomo", "Draenei"}
-local HordeRaces = {"Orco", "Trol", "Tauren", "No-muerto", "Elfo de sangre"}
+if not _G.HORDE_RACES then
+    _G.HORDE_RACES = {6, 7, 8, 9, 10}
+end
 
 local HideNameEditFrame = CreateFrame("Frame")
 local hideScheduled = false
@@ -88,6 +81,28 @@ local raceTooltips = {};
 local classTooltips = {};
 local detailedRaceTooltips = {};
 local detailedClassTooltips = {};
+
+local function HideAllTooltips()
+    for button, tooltip in pairs(raceTooltips) do
+        if tooltip then
+            tooltip:Hide()
+        end
+    end
+
+    for button, tooltip in pairs(classTooltips) do
+        if tooltip then
+            tooltip:Hide()
+        end
+    end
+
+    if AllianceTooltip then
+        AllianceTooltip:Hide()
+    end
+    
+    if HordeTooltip then
+        HordeTooltip:Hide()
+    end
+end
 
 local backdrop = {
     bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", 
@@ -103,72 +118,6 @@ local Backdrop2 = {
     insets = { left = 4, right = 4, top = 4, bottom = 4 }
 };
 
-local backdrop = {
-    bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", 
-    edgeFile = "Interface\\Tooltips\\ui-tooltip-border-maw", 
-    tile = true, tileSize = 12, edgeSize = 12, 
-    insets = { left = 3, right = 3, top = 3, bottom = 3 }
-}
-
-local backdrop = {
-    bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", 
-    edgeFile = "Interface\\Tooltips\\ui-tooltip-border-maw", 
-    tile = true, tileSize = 12, edgeSize = 12, 
-    insets = { left = 3, right = 3, top = 3, bottom = 3 }
-}
-
-local function GetFactionForRaceID(raceID)
-    for _, allianceRaceID in ipairs(ALLIANCE_RACES) do
-        if raceID == allianceRaceID then
-            return "Alliance"
-        end
-    end
-
-    for _, hordeRaceID in ipairs(HORDE_RACES) do
-        if raceID == hordeRaceID then
-            return "Horde"
-        end
-    end
-
-    return "Alliance"
-end
-
-local function GetRacesByFaction(allowedRaces)
-    local allianceList = {}
-    local hordeList = {}
-    
-    for _, race in ipairs(allowedRaces) do
-        local isAlliance = false
-        for _, allianceRace in ipairs(AllianceRaces) do
-            if race == allianceRace then
-                table.insert(allianceList, race)
-                isAlliance = true
-                break
-            end
-        end
-        
-        if not isAlliance then
-            for _, hordeRace in ipairs(HordeRaces) do
-                if race == hordeRace then
-                    table.insert(hordeList, race)
-                    break
-                end
-            end
-        end
-    end
-    
-    return allianceList, hordeList
-end
-
-local function HideAllTooltips()
-    for _, tooltip in pairs(raceTooltips) do
-        tooltip:Hide()
-    end
-    for _, tooltip in pairs(classTooltips) do
-        tooltip:Hide()
-    end
-end
-
 local function GetOrCreateRaceTooltip(button)
     if not raceTooltips[button] then
         local tooltip = CreateFrame("Frame", nil, CharacterCreateFrame)
@@ -178,7 +127,7 @@ local function GetOrCreateRaceTooltip(button)
         tooltip:SetBackdropColor(0, 0, 0, 1)
         
         local raceID = button:GetID()
-        local faction = GetFactionForRaceID(raceID)
+        local faction = _G.GetFactionForRaceID(raceID)
         
         if faction == "Alliance" then
             tooltip:SetPoint("LEFT", CharacterCreateFrame, "LEFT", 160, 50)
@@ -237,7 +186,7 @@ local function UpdateRaceTooltip(button, toggleDetails)
         toggleDetails = not detailedRaceTooltips[button]
     end
 
-    tooltip.rightClickText:SetText(toggleDetails and "Click-Derecho para ocultar Raciales." or "Click-Derecho para ver Raciales.")
+    tooltip.rightClickText:SetText(toggleDetails and RACIALS_HIDE_HINT or RACIALS_SHOW_HINT)
 
     local lastElement = tooltip.detailsText
     local heightToAdd = 0
@@ -366,16 +315,16 @@ local function GetValidRacesForClass(classID)
     local allianceRaces = {}
     local hordeRaces = {}
 
-    for _, raceID in ipairs(ALLIANCE_RACES) do
+    for _, raceID in ipairs(_G.ALLIANCE_RACES) do
         if IsRaceClassValid(raceID, classID) then
-            local raceName = _G["RACE_" .. raceID] or "Raza " .. raceID
+            local raceName = _G["RACE_" .. raceID] or RACE .. raceID
             table.insert(allianceRaces, raceName)
         end
     end
 
-    for _, raceID in ipairs(HORDE_RACES) do
+    for _, raceID in ipairs(_G.HORDE_RACES) do
         if IsRaceClassValid(raceID, classID) then
-            local raceName = _G["RACE_" .. raceID] or "Raza " .. raceID
+            local raceName = _G["RACE_" .. raceID] or RACE .. raceID
             table.insert(hordeRaces, raceName)
         end
     end
@@ -431,7 +380,7 @@ local function UpdateClassTooltip(button)
         tooltip.Roles:SetFont("Fonts\\FRIZQT__.TTF", 11)
     end
     
-    tooltip.Roles:SetText("|cffffffffFunciones:\n\n|r "..coloredRoles)
+    tooltip.Roles:SetText("|cFFFFFFFF"..FUNTION_INF.."|r\n\n "..coloredRoles)
 
     if showRestriction then
         tooltip.Roles:ClearAllPoints()
@@ -440,7 +389,7 @@ local function UpdateClassTooltip(button)
 
         tooltip.RestrictionText:SetPoint("TOPLEFT", tooltip.Roles, "BOTTOMLEFT", 0, -20)
         tooltip.RestrictionText:SetTextColor(1, 0, 0)
-        tooltip.RestrictionText:SetText("Para jugar esta clase, selecciona una de estas razas:")
+        tooltip.RestrictionText:SetText(WARNING_RACE)
         tooltip.RestrictionText:Show()
 
         local allianceRaces, hordeRaces = GetValidRacesForClass(classID)
@@ -448,14 +397,14 @@ local function UpdateClassTooltip(button)
         local factionText = ""
         
         if #allianceRaces > 0 then
-            factionText = "|cff0080ffAlianza:|r |cFFFFFFFF" .. table.concat(allianceRaces, ", ")
+            factionText = ALLIANCE_RACE .. " |cFFFFFFFF" .. table.concat(allianceRaces, ", ") .. "|r"
         end
         
         if #hordeRaces > 0 then
             if factionText ~= "" then
                 factionText = factionText .. "\n\n"
             end
-            factionText = factionText .. "|cffff0000Horda:|r |cFFFFFFFF" .. table.concat(hordeRaces, ", ")
+            factionText = factionText .. "\n" .. HORDE_RACE .. " |cFFFFFFFF" .. table.concat(hordeRaces, ", ") .. "|r"
         end
         
         tooltip.FactionText:SetPoint("TOPLEFT", tooltip.RestrictionText, "BOTTOMLEFT", 0, -15)
@@ -701,8 +650,8 @@ function CharacterCreate_OnLoad(self)
 	AllianceLogoFrame:EnableMouse(true)
 	
 	AllianceLogoFrame:SetScript("OnEnter", function(self)
-		AllianceTooltip.title:SetText("Alianza")
-		AllianceTooltip.description:SetText("Las nobles razas de la Alianza están unidas por orgullosas tradiciones de nobleza, honor, fe, justicia y sacrificio. Los muchos y diferentes pueblos de la Alianza aportan su sabiduría técnica, arcana y espiritual con el objetivo de un mundo pacífico y justo. Toma su estandarte para representar los altos ideales de la Alianza a lo largo de Azeroth y más allá.")
+		AllianceTooltip.title:SetText(ALLIANCE)
+		AllianceTooltip.description:SetText(FACTION_ALLIANCE_DESCRIPTION)
 		UpdateTooltipSize(AllianceTooltip)
 		AllianceTooltip:ClearAllPoints()
 		AllianceTooltip:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 90, 60)
@@ -731,8 +680,8 @@ function CharacterCreate_OnLoad(self)
 	HordeLogoFrame:EnableMouse(true)
 	
 	HordeLogoFrame:SetScript("OnEnter", function(self)
-		HordeTooltip.title:SetText("Horda")
-		HordeTooltip.description:SetText("Las orgullosas naciones de la Horda están unidas de forma laxa en una alianza de conveniencia contra un mundo hostil que buscaría destruirlas. Enfocada, feroz y a veces monstruosa, la Horda valora la fuerza y el honor, pero lucha por mantener su agresión bajo control. Únete a la Horda y pelea por construir un mundo donde su gente pueda vivir en libertad.")
+		HordeTooltip.title:SetText(HORDE)
+		HordeTooltip.description:SetText(FACTION_HORDE_DESCRIPTION)
 		UpdateTooltipSize(HordeTooltip)
 		HordeTooltip:ClearAllPoints()
 		HordeTooltip:SetPoint("TOPRIGHT", self, "BOTTOMRIGHT", -90, 60)
@@ -890,8 +839,16 @@ end
 function CharacterCreate_OnHide()
     PAID_SERVICE_CHARACTER_ID = nil;
     PAID_SERVICE_TYPE = nil;
-    HideAllTooltips();
     CharacterCreate_ResetState();
+
+    for button, tooltip in pairs(raceTooltips) do
+        if tooltip then tooltip:Hide() end
+    end
+    for button, tooltip in pairs(classTooltips) do
+        if tooltip then tooltip:Hide() end
+    end
+    if AllianceTooltip then AllianceTooltip:Hide() end
+    if HordeTooltip then HordeTooltip:Hide() end
 end
 
 function CharacterCreateFrame_OnMouseDown(button)
@@ -939,7 +896,7 @@ function CharacterCreateEnumerateRaces(...)
         button = _G["CharacterCreateRaceButton"..index];
 
         local raceID = index
-        local faction = GetFactionForRaceID(raceID)
+        local faction = _G.GetFactionForRaceID(raceID)
         local borderColor
         
         if faction == "Alliance" then

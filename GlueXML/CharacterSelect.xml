@@ -526,7 +526,7 @@
             					</Texture>
         					</Layer>
         					<Layer level="OVERLAY">
-            					<FontString name="$parentLabel" inherits="GlueFontNormal" text="Lista de Personajes de la banda de guerra">
+            					<FontString name="$parentLabel" inherits="GlueFontNormal" text="WARBANG_INF">
                 					<Anchors>
                     					<Anchor point="RIGHT" relativePoint="LEFT" relativeTo="$parent">
                         					<Offset>
@@ -591,24 +591,6 @@
     					    <OnClick>
     					        PlaySound("gsTitleOptions");
     					        OptionsSelectFrame:Show();
-    					    </OnClick>
-    					</Scripts>
-					</Button>
-					
-					<Button name="CharacterSelectWebButton" inherits="GlueButtonTemplate" text="SERVER_WEB">
-    					<Size>
-    					    <AbsDimension x="150" y="51"/>
-    					</Size>
-    					<Anchors>
-    					    <Anchor point="BOTTOMLEFT" relativeTo="OptionsButton2" relativePoint="TOPLEFT">
-    					        <Offset>
-    					            <AbsDimension x="0" y="-5"/>
-    					        </Offset>
-     					   </Anchor>
-    					</Anchors>
-    					<Scripts>
-    					    <OnClick>
-    					        LaunchURL("you/link");
     					    </OnClick>
     					</Scripts>
 					</Button>

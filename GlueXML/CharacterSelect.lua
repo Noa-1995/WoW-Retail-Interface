@@ -290,7 +290,6 @@ function CharacterSelect_OnEventO()
 		OptionsButton2:Hide();
         CharSelectChangeRealmButton:Hide();
 		CharacterSelectDeleteButton:Hide();
-		CharacterSelectWebButton:Hide();
         
     elseif ( SelectBorroso == 1 ) then
         CharSelectCharacterName:SetAlpha(1);
@@ -315,7 +314,6 @@ function CharacterSelect_OnEventO()
 		OptionsButton2:Show();
         CharSelectChangeRealmButton:Show();
 		CharacterSelectDeleteButton:Show();
-		CharacterSelectWebButton:Show();
     end
     PlaySound("igMainMenuOptionCheckBoxOn")
 end
@@ -440,14 +438,14 @@ function UpdateCharacterList()
     end
 
     local CLASS_COLORS = {
-        -- EspaÃ±ol
+        -- Español
         ["GUERRERO"]="|cffC79C6E",["GUERRERA"]="|cffC79C6E",
-        ["PALADÃN"]="|cffF58CBA",
+        ["PALADIN"]="|cffF58CBA",
         ["CAZADOR"]="|cffABD473",["CAZADORA"]="|cffABD473",
-        ["PÃCARO"]="|cffFFF569",["PÃCARA"]="|cffFFF569",
+        ["PICARO"]="|cffFFF569",["PICARA"]="|cffFFF569",
         ["SACERDOTE"]="|cffFFFFFF",["SACERDOTISA"]="|cffFFFFFF",
         ["CABALLERO DE LA MUERTE"]="|cffC41F3B",
-        ["CHAMÃN"]="|cff0070DE",
+        ["CHAMÃN"]="|cff0070DE",
         ["MAGO"]="|cff69CCF0",["MAGA"]="|cff69CCF0",
         ["BRUJO"]="|cff9482C9",["BRUJA"]="|cff9482C9",
         ["DRUIDA"]="|cffFF7D0A",
@@ -465,19 +463,7 @@ function UpdateCharacterList()
     };
 
     local function GetCharacterFaction(race)
-        local normalizedRace = string.upper(race or ""):gsub("[%s%-']", "")
-        local allianceRaces = {
-            -- EspaÃ±ol
-            ["HUMANO"] = true, ["HUMANA"] = true, ["ENANO"] = true, ["ENANA"] = true, ["ELFODELANOCHE"] = true, ["ELFADELANOCHE"] = true, ["GNOMO"] = true, ["GNOMA"] = true, ["DRAENEI"] = true,
-            -- English
-            ["HUMAN"] = true, ["DWARF"] = true, ["NIGHTELF"] = true, ["GNOME"] = true, ["DRAENEI"] = true
-        }
-
-        if allianceRaces[normalizedRace] then
-            return "Alliance"
-        else
-            return "Horde"
-        end
+        return GetFactionForRaceName(race)
     end
 
     local FACTION_ICONS = {
@@ -610,12 +596,20 @@ function UpdateCharacterList()
                 statusText:SetPoint("TOPLEFT", button, "TOPLEFT", 170, -5);
                 statusText:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE");
                 statusText:SetTextColor(1, 0.2, 0.2);
-                statusText:SetText("[Muerto]");
+    
+                local deadText = _G["DEAD_INF"] or 
+                                (_G["GlueStrings"] and _G["GlueStrings"]["DEAD_INF"] and 
+                                 _G["GlueStrings"]["DEAD_INF"][GetLocale()]);
+                statusText:SetText(deadText);
             else
                 statusText:SetPoint("TOPLEFT", button, "TOPLEFT", 182, -5);
                 statusText:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE");
                 statusText:SetTextColor(0.2, 1, 0.2);
-                statusText:SetText("[Vivo]");
+                
+                local aliveText = _G["LIFE_INF"] or 
+                                 (_G["GlueStrings"] and _G["GlueStrings"]["LIFE_INF"] and 
+                                  _G["GlueStrings"]["LIFE_INF"][GetLocale()]);
+                statusText:SetText(aliveText);
             end
         end
         
@@ -778,26 +772,25 @@ function CharacterDeleteDialog_OnShow()
         return;
     end
 
-    if race == "Humano" or race == "Humana" or race == "Enano" or race == "Enana" or race == "Elfo de la noche" or race == "Elfa de la noche" or race == "Gnomo" or race == "Gnoma" or race == "Draenei" then
-        faction = "|cff0080ffAlianza|r";
+    local factionType = GetFactionForRaceName(race)
+    
+    if factionType == "Alliance" then
+        faction = ALLIANCE_RACE;
         isAlliance = true;
-    elseif race == "Orco" or race == "Orca" or race == "No-muerto" or race == "No-muerta" or race == "Tauren" or race == "Trol" or race == "Elfo de sangre" or race == "Elfa de sangre" then
-        faction = "|cffff0000Horda|r";
-        isAlliance = false;
     else
-        faction = race;
-        isAlliance = nil;
+        faction = HORDE_RACE;
+        isAlliance = false;
     end
 
     CharacterDeleteText1:SetFont("Fonts\\FRIZQT__.TTF", 12)
     CharacterDeleteText2:SetFont("Fonts\\FRIZQT__.TTF", 10)
     CharacterDeleteAlertText:SetFont("Fonts\\FRIZQT__.TTF", 10)
     CharacterDeleteAlertText:SetTextColor(1, 0.2, 0.2)
-    CharacterDeleteAlertText:SetText("Quieres Borrar este Personaje.")
+    CharacterDeleteAlertText:SetText(WARNING_CHAR_INF)
 
     CharacterDeleteCenterText:SetFont("Fonts\\FRIZQT__.TTF", 11)
     CharacterDeleteCenterText:SetTextColor(1, 0, 0)
-    CharacterDeleteCenterText:SetText("Esta accion no se puede deshacer")
+    CharacterDeleteCenterText:SetText(WARNING_INF)
     
     CharacterDeleteText1:SetFormattedText(CONFIRM_CHAR_DELETE, name, level, class, faction);
 
@@ -830,16 +823,11 @@ function CharacterDeleteDialog_OnShow()
         CharacterDeleteLeftTexture:SetAlpha(1.0)
         CharacterDeleteRightTexture:SetDesaturated(true)
         CharacterDeleteRightTexture:SetAlpha(0.6)
-    elseif isAlliance == false then
+    else
         CharacterDeleteRightTexture:SetDesaturated(false)
         CharacterDeleteRightTexture:SetAlpha(1.0)
         CharacterDeleteLeftTexture:SetDesaturated(true)
         CharacterDeleteLeftTexture:SetAlpha(0.6)
-    else
-        CharacterDeleteLeftTexture:SetDesaturated(true)
-        CharacterDeleteRightTexture:SetDesaturated(true)
-        CharacterDeleteLeftTexture:SetAlpha(0.6)
-        CharacterDeleteRightTexture:SetAlpha(0.6)
     end
 
     CharacterDeleteLeftTexture:Show()

@@ -1,6 +1,6 @@
--- ============================================================================
--- Autora: Noa
--- ============================================================================
+-- ==============================================================================================
+-- Autora: Noa - SISTEMA DE AUTOLOGIN CON BOTONES DE REDES SOCIALES CON ANIMACIÓN BLP Y ESCENA 3D
+-- ==============================================================================================
 local Config = {
     FADE_IN_TIME = 2,
     DEFAULT_TOOLTIP_COLOR = {0.8, 0.8, 0.8, 0.09, 0.09, 0.09},
@@ -8,7 +8,6 @@ local Config = {
     AUTO_LOGIN_DELAY = 3.0,
     BACKGROUND_TEXTURE = "Interface/Loginscreen/Background.blp",
     LOGIN_AMBIENCE = false,
-	CUSTOM_ALERT_TITLE = "World of Warcraft",
 
     ENABLE_BLP_ANIMATION = false,
     FRAME_COUNT = 3,
@@ -52,7 +51,7 @@ local ModelManager = {
 }
 
 local UICache = {
-    accountEdit = nil, passwordEdit = nil, saveAccountName = nil, savePassword = nil, autoLogin = nil, autoLoginText = nil, loginButton = nil, versionText = nil, realmName = nil, upgradeButton = nil, customAlertFrame = nil, customAlertText = nil, customAlertTitle = nil, tosFrame = nil, tosAccept = nil, tosDecline = nil, backgroundTexture = nil, animatedTexture = nil, newLogo = nil, newLogoFrame = nil
+    accountEdit = nil, passwordEdit = nil, saveAccountName = nil, savePassword = nil, autoLogin = nil, autoLoginText = nil, loginButton = nil, versionText = nil, realmName = nil, upgradeButton = nil, tosFrame = nil, tosAccept = nil, tosDecline = nil, backgroundTexture = nil, animatedTexture = nil, newLogo = nil, newLogoFrame = nil
 }
 
 LOGIN_MODEL_LIGHTS = {
@@ -73,11 +72,25 @@ BACKGROUND_MODELS = {
 }
 -- ==================== CONFIGURACIÓN ADICIONAL ====================
 local function InitializeUICache()
-    UICache.accountEdit = _G["AccountLoginAccountEdit"] UICache.passwordEdit = _G["AccountLoginPasswordEdit"] UICache.saveAccountName = _G["AccountLoginSaveAccountName"] UICache.savePassword = _G["AccountLoginSavePassword"] UICache.autoLogin = _G["AccountLoginAutoLogin"] UICache.autoLoginText = _G["AccountLoginAutoLoginText"] UICache.loginButton = _G["AccountLoginLoginButton"] UICache.versionText = _G["AccountLoginVersion"] UICache.realmName = _G["AccountLoginRealmName"] UICache.serverCredit = _G["AccountLoginServerCredit"] UICache.upgradeButton = _G["AccountLoginUpgradeAccountButton"] UICache.customAlertFrame = _G["CustomAlertFrame"] UICache.customAlertText = _G["CustomAlertText"] UICache.customAlertTitle = _G["CustomAlertTitle"] UICache.tosFrame = _G["TOSFrame"] UICache.tosAccept = _G["TOSAccept"] UICache.tosDecline = _G["TOSDecline"]
+    UICache.accountEdit = _G["AccountLoginAccountEdit"] 
+    UICache.passwordEdit = _G["AccountLoginPasswordEdit"] 
+    UICache.saveAccountName = _G["AccountLoginSaveAccountName"] 
+    UICache.savePassword = _G["AccountLoginSavePassword"] 
+    UICache.autoLogin = _G["AccountLoginAutoLogin"] 
+    UICache.autoLoginText = _G["AccountLoginAutoLoginText"] 
+    UICache.loginButton = _G["AccountLoginLoginButton"] 
+    UICache.versionText = _G["AccountLoginVersion"] 
+    UICache.realmName = _G["AccountLoginRealmName"] 
+    UICache.upgradeButton = _G["AccountLoginUpgradeAccountButton"] 
+    UICache.tosFrame = _G["TOSFrame"] 
+    UICache.tosAccept = _G["TOSAccept"] 
+    UICache.tosDecline = _G["TOSDecline"]
 end
+
 function GetLoginConfig()
     return Config
 end
+
 function GetLoginState()
     return LoginState
 end
@@ -120,6 +133,7 @@ GlueDialogTypes["REMEMBER_PASSWORD"] = {
         UICache.autoLogin:SetChecked(0)
     end,
 }
+
 GlueDialogTypes["AUTO_LOGIN"] = {
     text = SAVE_AUTOLOGIN_NOTICE,
     button1 = OKAY,
@@ -169,7 +183,7 @@ local function InitializeLoginScene(parent)
     end
     ModelManager.loginModels = {}
 
-    for _, modelData in ipairs(LoginModelsConfig) do
+    for _, modelData in ipairs(LOGIN_MODELS) do
         if modelData[LOGIN_MODEL_STRUCT.SCENE_ID] == LoginState.currentScene then
             local model = CreateLoginModel(parent, modelData)
             table.insert(ModelManager.loginModels, model)
@@ -235,12 +249,15 @@ end
 local function isBackgroundModel(modelPath)
     return BACKGROUND_MODELS[modelPath] ~= nil
 end
+
 local function getModelFrameLevel(modelPath)
     return isBackgroundModel(modelPath) and BACKGROUND_MODELS[modelPath].frameLevel or Config.DEFAULT_FRAME_LEVEL
 end
 
 function AccountLogin_OnLoad(self)
     InitializeUICache()
+    
+    AccountLogin_SetupServerAlert()
     
     UICache.tosFrame.noticeType = "EULA"
     self:RegisterEvent("SHOW_SERVER_ALERT")
@@ -363,9 +380,6 @@ function AccountLogin_OnShow(self)
     UICache.accountEdit:SetText(accountName or "")
     UICache.passwordEdit:SetText(password or "")
 
-    if not UICache.customAlertFrame:IsShown() then
-        AccountLogin_ToggleCustomPanel()
-    end
     PlayGlueAmbience("GlueScreenUndead", Config.UNDEAD_AMBIENCE_FADE_TIME)
     AccountLogin_ShowUserAgreements()
 
@@ -443,14 +457,6 @@ function AccountLogin_FocusAccountName()
     UICache.accountEdit:SetFocus()
 end
 
-function AccountLogin_FocusPassword()
-    AccountLoginPasswordEdit:SetFocus()
-end
-
-function AccountLogin_FocusAccountName()
-    AccountLoginAccountEdit:SetFocus()
-end
-
 function AccountLogin_OnKeyDown(key)
     if key == "ESCAPE" then
         if ConnectionHelpFrame:IsShown() then
@@ -476,6 +482,8 @@ end
 
 function AccountLogin_OnEvent(event, arg1, arg2, arg3)
     if event == "SHOW_SERVER_ALERT" then
+        ServerAlertText:SetText(arg1)
+        ServerAlertFrame:Show()
     elseif event == "SHOW_SURVEY_NOTIFICATION" then
         AccountLogin_ShowSurveyNotification()
     elseif event == "CLIENT_ACCOUNT_MISMATCH" then
@@ -569,35 +577,40 @@ function AccountLogin_CheckAutoLogin()
     end
 end
 -- ============================================================================
--- GESTIÓN DEL PANEL DE INFORMACIÓN PERSONALIZADO
+-- ANIMACIÓN PARA SERVER ALERT FRAME
 -- ============================================================================
-function AccountLogin_ToggleCustomPanel()
-    if UICache.customAlertFrame.isAnimating then
+function AccountLogin_ToggleServerAlert()
+    local frame = ServerAlertFrame
+    if not frame then return end
+    
+    if frame.isAnimating then
         return
     end
     
-    if UICache.customAlertFrame.fadeInfo then
-        UICache.customAlertFrame:SetScript("OnUpdate", nil)
-        UICache.customAlertFrame.fadeInfo = nil
+    if frame.fadeInfo then
+        frame:SetScript("OnUpdate", nil)
+        frame.fadeInfo = nil
     end
-    UICache.customAlertFrame.isAnimating = true
+    
+    frame.isAnimating = true
+
     local logoTexture = UICache.newLogo
     
-    if UICache.customAlertFrame:IsShown() then
-        local startWidth = UICache.customAlertFrame:GetWidth()
-        local scrollFrame = _G["CustomAlertScrollFrame"]
+    if frame:IsShown() then
+        local startWidth = frame:GetWidth()
+        local scrollFrame = _G["ServerAlertScrollFrame"]
         
         if not scrollFrame then
-            UICache.customAlertFrame:Hide()
-            UICache.customAlertFrame.isAnimating = false
+            frame:Hide()
+            frame.isAnimating = false
             return
         end
-        local scrollChild = scrollFrame:GetScrollChild()
+        
         local startScrollWidth = scrollFrame:GetWidth()
         
-        UICache.customAlertFrame.fadeInfo = {
+        frame.fadeInfo = {
             mode = "OUT",
-            timeToFade = Config.FADE_DURATION,
+            timeToFade = 0.5,
             startAlpha = 1,
             endAlpha = 0,
             startWidth = startWidth,
@@ -605,14 +618,13 @@ function AccountLogin_ToggleCustomPanel()
             startScrollWidth = startScrollWidth,
             endScrollWidth = 0,
             scrollFrame = scrollFrame,
-            scrollChild = scrollChild,
             savedWidth = startWidth,
             savedScrollWidth = startScrollWidth,
-            logoAlpha = 1,
+            logoAlpha = logoTexture and logoTexture:GetAlpha() or 1,
             logoEndAlpha = 0
         }
         
-        UICache.customAlertFrame:SetScript("OnUpdate", function(self, elapsed)
+        frame:SetScript("OnUpdate", function(self, elapsed)
             if not self.fadeInfo then return end
             local fadeInfo = self.fadeInfo
             fadeInfo.elapsed = (fadeInfo.elapsed or 0) + elapsed
@@ -620,9 +632,11 @@ function AccountLogin_ToggleCustomPanel()
             if fadeInfo.elapsed < fadeInfo.timeToFade then
                 local progress = fadeInfo.elapsed / fadeInfo.timeToFade
                 self:SetAlpha(fadeInfo.startAlpha + (fadeInfo.endAlpha - fadeInfo.startAlpha) * progress)
-                
+
                 if logoTexture then
-                    logoTexture:SetAlpha(fadeInfo.logoAlpha + (fadeInfo.logoEndAlpha - fadeInfo.logoAlpha) * progress)
+                    local logoProgress = progress
+                    local logoAlpha = fadeInfo.logoAlpha + (fadeInfo.logoEndAlpha - fadeInfo.logoAlpha) * logoProgress
+                    logoTexture:SetAlpha(logoAlpha)
                 end
                 
                 local currentWidth = fadeInfo.startWidth + (fadeInfo.endWidth - fadeInfo.startWidth) * progress
@@ -632,29 +646,22 @@ function AccountLogin_ToggleCustomPanel()
                 if fadeInfo.scrollFrame then
                     fadeInfo.scrollFrame:SetWidth(currentScrollWidth)
                 end
-                if fadeInfo.scrollChild then
-                    fadeInfo.scrollChild:SetWidth(currentScrollWidth)
-                end
             else
                 self:SetAlpha(fadeInfo.endAlpha)
                 self:SetWidth(fadeInfo.endWidth)
+                
                 if logoTexture then
                     logoTexture:SetAlpha(fadeInfo.logoEndAlpha)
                 end
+                
                 if fadeInfo.scrollFrame then
                     fadeInfo.scrollFrame:SetWidth(fadeInfo.endScrollWidth)
                 end
-                if fadeInfo.scrollChild then
-                    fadeInfo.scrollChild:SetWidth(fadeInfo.endScrollWidth)
-                end
                 
                 self:Hide()
-                self:SetWidth(fadeInfo.savedWidth or Config.CUSTOM_PANEL_WIDTH)
+                self:SetWidth(fadeInfo.savedWidth or 341)
                 if fadeInfo.scrollFrame then
-                    fadeInfo.scrollFrame:SetWidth(fadeInfo.savedScrollWidth or Config.CUSTOM_PANEL_SCROLL_WIDTH)
-                end
-                if fadeInfo.scrollChild then
-                    fadeInfo.scrollChild:SetWidth(fadeInfo.savedScrollWidth or Config.CUSTOM_PANEL_SCROLL_WIDTH)
+                    fadeInfo.scrollFrame:SetWidth(fadeInfo.savedScrollWidth or 300)
                 end
                 
                 self:SetScript("OnUpdate", nil)
@@ -663,66 +670,29 @@ function AccountLogin_ToggleCustomPanel()
             end
         end)
     else
-        if not CustomAlertFrame.initialized then
-            local customMessage = [[
-                <html><body>
-                <h1 align="center">|cFFFFD700Historia de|r |cFFFF7C00World|r |cFF00FF00of|r |cFF00D1FFWarcraft|r</h1>
-                    <p>----------------------------------------------------------</p>
-                <p>|TInterface\ICONS\achievement_boss_ragnaros:25:25:0:-5|t |cFF00B4FFÉpoca Clásica (Vanilla)|r</p>
-                <p>|TInterface\ICONS\achievement_arena_2v2_1:18:18:0:-8|t |cFFAAD372- Azeroth se recupera de las Guerras Orcas|r</p>
-                <p>|TInterface\ICONS\achievement_bg_winwsg:18:18:0:-8|t |cFFAAD372- La Horda y la Alianza en una frágil paz|r</p>
-                <p>|TInterface\ICONS\achievement_boss_onyxia:18:18:0:-8|t |cFFAAD372- Amenazas: Ragnaros, Onyxia, Nefarian|r</p>
-                <p>|TInterface\ICONS\spell_deathknight_armyofthedead:18:18:0:-8|t |cFFAAD372- Surgimiento de la Plaga en Lordaeron|r</p>
-                <p>----------------------------------------------------------</p>
-                <p>|TInterface\ICONS\achievement_boss_illidan:25:25:0:-5|t |cFFFF7C00The Burning Crusade|r</p>
-                <p>|TInterface\ICONS\spell_arcane_teleportorgrimmar:18:18:0:-8|t |cFFFFB347- El Portal Oscuro se reabre|r</p>
-                <p>|TInterface\ICONS\achievement_zone_outland_01:18:18:0:-8|t |cFFFFB347- Illidan gobierna Outland|r</p>
-                <p>|TInterface\ICONS\achievement_boss_kiljaedan:18:18:0:-8|t |cFFFFB347- Legión Ardiente invade|r</p>
-                <p>|TInterface\ICONS\achievement_bg_masterofallbgs:18:18:0:-8|t |cFFFFB347- Elfos de Sangre y Draenei se unen|r</p>
-                <p>----------------------------------------------------------</p>
-                <p>|TInterface\ICONS\achievement_boss_lichking:25:25:0:-5|t |cFF00D1FFWrath of the Lich King|r</p>
-                <p>|TInterface\ICONS\achievement_zone_icecrown_01:18:18:0:-8|t |cFFA6D8FF- Arthas despierta como Rey Exánime|r</p>
-                <p>|TInterface\ICONS\spell_deathknight_iceboundfortitude:18:18:0:-8|t |cFFA6D8FF- Caballeros de la Muerte invaden|r</p>
-                <p>|TInterface\ICONS\inv_helmet_133:18:18:0:-8|t |cFFA6D8FF- Batalla por la Corona de Hielo|r</p>
-                <p>|TInterface\ICONS\achievement_bg_winab:18:18:0:-8|t |cFFA6D8FF- La Plaga amenaza Azeroth|r</p>
-                <p>----------------------------------------------------------</p>
-                <p>|TInterface\ICONS\inv_inscription_weaponscroll02:25:25:0:-5|t |cFFAA22FF¿Listo para tu aventura?|r</p>
-                <p>|TInterface\ICONS\achievement_guildperk_everybodysfriend:18:18:0:-5|t |cFFE6CC80Únete a nuestra comunidad:|r 
-                |TInterface\ICONS\mail_gmicon:18:18:0:-3|t <a href="https://www.youtube.com">Web</a> | 
-                |TInterface\ICONS\inv_misc_groupneedmore:18:18:0:-3|t <a href="https://www.youtube.com">Discord</a></p>
-                </body></html>
-            ]]
-            CustomAlertText:SetText(customMessage)
-            CustomAlertFrame.initialized = true
-        end
+        local targetWidth = 341
+        local targetScrollWidth = 300
         
-        local targetWidth = Config.CUSTOM_PANEL_WIDTH
-        local targetScrollWidth = Config.CUSTOM_PANEL_SCROLL_WIDTH
-        
-        local scrollFrame = _G["CustomAlertScrollFrame"]
+        local scrollFrame = _G["ServerAlertScrollFrame"]
         if not scrollFrame then
-            UICache.customAlertFrame:Show()
-            UICache.customAlertFrame.isAnimating = false
+            frame:Show()
+            frame.isAnimating = false
             return
         end
-        local scrollChild = scrollFrame:GetScrollChild()
         
-        UICache.customAlertFrame:SetWidth(0)
+        frame:SetWidth(0)
         scrollFrame:SetWidth(0)
-        if scrollChild then
-            scrollChild:SetWidth(0)
-        end
-        UICache.customAlertFrame:SetAlpha(0)
-        
+        frame:SetAlpha(0)
+        frame:Show()
+
         if logoTexture then
             logoTexture:SetAlpha(0)
             logoTexture:Show()
         end
-        UICache.customAlertFrame:Show()
         
-        UICache.customAlertFrame.fadeInfo = {
+        frame.fadeInfo = {
             mode = "IN",
-            timeToFade = Config.FADE_DURATION,
+            timeToFade = 0.5,
             startAlpha = 0,
             endAlpha = 1,
             startWidth = 0,
@@ -730,12 +700,11 @@ function AccountLogin_ToggleCustomPanel()
             startScrollWidth = 0,
             endScrollWidth = targetScrollWidth,
             scrollFrame = scrollFrame,
-            scrollChild = scrollChild,
             logoAlpha = 0,
             logoEndAlpha = 1
         }
         
-        UICache.customAlertFrame:SetScript("OnUpdate", function(self, elapsed)
+        frame:SetScript("OnUpdate", function(self, elapsed)
             if not self.fadeInfo then return end
             local fadeInfo = self.fadeInfo
             fadeInfo.elapsed = (fadeInfo.elapsed or 0) + elapsed
@@ -743,9 +712,11 @@ function AccountLogin_ToggleCustomPanel()
             if fadeInfo.elapsed < fadeInfo.timeToFade then
                 local progress = fadeInfo.elapsed / fadeInfo.timeToFade
                 self:SetAlpha(fadeInfo.startAlpha + (fadeInfo.endAlpha - fadeInfo.startAlpha) * progress)
-                
+
                 if logoTexture then
-                    logoTexture:SetAlpha(fadeInfo.logoAlpha + (fadeInfo.logoEndAlpha - fadeInfo.logoAlpha) * progress)
+                    local logoProgress = progress
+                    local logoAlpha = fadeInfo.logoAlpha + (fadeInfo.logoEndAlpha - fadeInfo.logoAlpha) * logoProgress
+                    logoTexture:SetAlpha(logoAlpha)
                 end
                 
                 local currentWidth = fadeInfo.startWidth + (fadeInfo.endWidth - fadeInfo.startWidth) * progress
@@ -755,20 +726,16 @@ function AccountLogin_ToggleCustomPanel()
                 if fadeInfo.scrollFrame then
                     fadeInfo.scrollFrame:SetWidth(currentScrollWidth)
                 end
-                if fadeInfo.scrollChild then
-                    fadeInfo.scrollChild:SetWidth(currentScrollWidth)
-                end
             else
                 self:SetAlpha(fadeInfo.endAlpha)
                 self:SetWidth(fadeInfo.endWidth)
+
                 if logoTexture then
                     logoTexture:SetAlpha(fadeInfo.logoEndAlpha)
                 end
+                
                 if fadeInfo.scrollFrame then
                     fadeInfo.scrollFrame:SetWidth(fadeInfo.endScrollWidth)
-                end
-                if fadeInfo.scrollChild then
-                    fadeInfo.scrollChild:SetWidth(fadeInfo.endScrollWidth)
                 end
                 
                 self:SetScript("OnUpdate", nil)
@@ -780,16 +747,11 @@ function AccountLogin_ToggleCustomPanel()
     PlaySound("gsLoginNewAccount")
 end
 
-function AccountLogin_SetCustomAlertText(text)
-    UICache.customAlertText:SetText(text)
-    if not UICache.customAlertFrame:IsShown() then
-        UICache.customAlertFrame:Show()
+function AccountLogin_SetupServerAlert()
+    if ServerAlertFrame then
+        ServerAlertFrame.isAnimating = false
+        ServerAlertFrame.fadeInfo = nil
     end
-end
-
-function AccountLogin_SetCustomAlertTitle(title)
-    local titleText = title or Config.CUSTOM_ALERT_TITLE
-    UICache.customAlertTitle:SetText(titleText)
 end
 -- ============================================================================
 -- FUNCIONES ADICIONALES

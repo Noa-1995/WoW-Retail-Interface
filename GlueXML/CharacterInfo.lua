@@ -230,6 +230,120 @@ function GetRaceTooltipPosition(raceID, button)
     end
 end
 
+local RACE_DATA = {
+    [1]  = { glueString = "HUMAN",     faction = "Alliance" },
+    [2]  = { glueString = "DWARF",     faction = "Alliance" },
+    [3]  = { glueString = "NIGHT_ELF", faction = "Alliance" },
+    [4]  = { glueString = "GNOME",     faction = "Alliance" },
+    [5]  = { glueString = "DRAENEI",   faction = "Alliance" },
+    [6]  = { glueString = "ORC",       faction = "Horde" },
+    [7]  = { glueString = "UNDEAD",    faction = "Horde" },
+    [8]  = { glueString = "TAUREN",    faction = "Horde" },
+    [9]  = { glueString = "TROLL",     faction = "Horde" },
+    [10] = { glueString = "BLOOD_ELF", faction = "Horde" },
+}
+
+local ALLIANCE_RACES = {1, 2, 3, 4, 5}
+local HORDE_RACES = {6, 7, 8, 9, 10}
+
+local function GetRaceName(raceID)
+    local raceData = RACE_DATA[raceID]
+    if not raceData then
+        return "Human"
+    end
+
+    return _G[raceData.glueString] or raceData.glueString
+end
+
+local function GetFactionForRaceID(raceID)
+    local raceData = RACE_DATA[raceID]
+    return raceData and raceData.faction or "Alliance"
+end
+
+local function GetRaceNamesByFaction(faction)
+    local names = {}
+    local raceList = (faction == "Alliance") and ALLIANCE_RACES or HORDE_RACES
+    
+    for _, raceID in ipairs(raceList) do
+        table.insert(names, GetRaceName(raceID))
+    end
+    
+    return names
+end
+
+local AllianceRaces = GetRaceNamesByFaction("Alliance")
+local HordeRaces = GetRaceNamesByFaction("Horde")
+
+local function GetCurrentRaceName()
+    local raceID = GetSelectedRace()
+    return GetRaceName(raceID)
+end
+
+local function GetRacesByFaction(allowedRaces)
+    local allianceList = {}
+    local hordeList = {}
+    
+    for _, race in ipairs(allowedRaces) do
+        local isAlliance = false
+        for _, allianceRace in ipairs(AllianceRaces) do
+            if race == allianceRace then
+                table.insert(allianceList, race)
+                isAlliance = true
+                break
+            end
+        end
+        
+        if not isAlliance then
+            for _, hordeRace in ipairs(HordeRaces) do
+                if race == hordeRace then
+                    table.insert(hordeList, race)
+                    break
+                end
+            end
+        end
+    end
+    
+    return allianceList, hordeList
+end
+
+local RACE_NAME_CACHE = {}
+
+local function GetFactionForRaceName(raceName)
+    if not raceName then return "Horde" end
+
+    if RACE_NAME_CACHE[raceName] then
+        return RACE_NAME_CACHE[raceName]
+    end
+    
+    local currentLocale = GetLocale()
+    local faction = nil
+
+    for _, raceData in pairs(RACE_DATA) do
+        local baseKey = raceData.glueString
+
+        for _, genderKey in ipairs({"_MALE", "_FEMALE"}) do
+            local fullKey = baseKey .. genderKey
+            local localizedName = _G[fullKey]
+            
+            if localizedName and localizedName == raceName then
+                faction = raceData.faction
+                break
+            end
+        end
+        
+        if faction then
+            break
+        end
+    end
+
+    if not faction then
+        faction = "Horde"
+    end
+
+    RACE_NAME_CACHE[raceName] = faction
+    return faction
+end
+
 _G.RACE_1 = "Humano"
 _G.RACE_2 = "Enano"
 _G.RACE_3 = "Elfo de la noche"
@@ -243,5 +357,19 @@ _G.RACE_10 = "Elfo de sangre"
 
 _G.Races_Informations = Races_Informations
 _G.Class_Informations = Class_Informations
-_G.ClassRaces = ClassRaces
+_G.ClassRaces = ClassRaces or {}
 _G.GetRaceTooltipPosition = GetRaceTooltipPosition
+
+_G.GetRaceName = GetRaceName
+_G.GetFactionForRaceID = GetFactionForRaceID
+_G.GetRaceNamesByFaction = GetRaceNamesByFaction
+_G.GetCurrentRaceName = GetCurrentRaceName
+_G.GetRacesByFaction = GetRacesByFaction
+
+_G.ALLIANCE_RACES = ALLIANCE_RACES
+_G.HORDE_RACES = HORDE_RACES
+_G.RACE_DATA = RACE_DATA
+_G.AllianceRaces = AllianceRaces
+_G.HordeRaces = HordeRaces
+
+_G.GetFactionForRaceName = GetFactionForRaceName

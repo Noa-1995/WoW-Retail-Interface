@@ -193,115 +193,6 @@
 						<HighlightTexture file="Interface\Glues\Common\Red\DiscordIcon_h"/>
 					</Button>
 					<!-- ====================================== -->
-					<!-- BOTÓN DE INFORMACIÓN -->
-					<!-- ====================================== -->
-					<Button name="AccountLoginShowHide" inherits="GlueButtonTemplateBlue" text="INFORMATION">
-						<Size x="150" y="38"/>
-						<Anchors>
-							<Anchor point="BOTTOMRIGHT">
-								<Offset>
-									<AbsDimension x="-5" y="150"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Scripts>
-							<OnClick>
-								AccountLogin_ToggleCustomPanel();
-							</OnClick>
-						</Scripts>
-						<ButtonText>
-							<Anchors>
-								<Anchor point="CENTER" relativePoint="CENTER">
-									<Offset>
-										<AbsDimension x="0" y="2"/>
-									</Offset>
-								</Anchor>
-							</Anchors>
-						</ButtonText>
-						<NormalFont style="GlueFontNormalSmall"/>
-						<HighlightFont style="GlueFontHighlightSmall"/>
-					</Button>
-					<!-- ====================================== -->
-					<!-- PANEL DE INFORMACIÓN PERSONALIZADO -->
-					<!-- ====================================== -->
-					<Frame name="CustomAlertFrame" hidden="true">
-						<Size>
-							<AbsDimension x="352" y="550"/>
-						</Size>
-						<Anchors>
-							<Anchor point="TOPLEFT">
-								<Offset>
-									<AbsDimension x="10" y="-130"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\tooltips\ui-tooltip-border-maw" tile="true">
-							<BackgroundInsets>
-								<AbsInset left="3" right="3" top="3" bottom="3"/>
-							</BackgroundInsets>
-							<TileSize>
-								<AbsValue val="12"/>
-							</TileSize>
-							<EdgeSize>
-								<AbsValue val="12"/>
-							</EdgeSize>
-						</Backdrop>
-						<Layers>
-							<Layer level="ARTWORK">
-								<FontString name="CustomAlertTitle" inherits="GlueFontNormalLarge">
-									<Anchors>
-										<Anchor point="TOP">
-											<Offset>
-												<AbsDimension x="0" y="-20"/>
-											</Offset>
-										</Anchor>
-									</Anchors>
-								</FontString>
-							</Layer>
-						</Layers>
-						<Frames>
-							<ScrollFrame name="CustomAlertScrollFrame" inherits="GlueScrollFrameTemplate">
-								<Size>
-									<AbsDimension x="300" y="500"/>
-								</Size>
-								<Anchors>
-									<Anchor point="TOPLEFT">
-										<Offset>
-											<AbsDimension x="15" y="-46"/>
-										</Offset>
-									</Anchor>
-								</Anchors>
-								<Scripts>
-									<OnLoad>
-										self.scrollBarHideable = 1;
-										GlueScrollFrame_OnScrollRangeChanged(self);
-									</OnLoad>
-									<OnScrollRangeChanged>
-										GlueScrollFrame_OnScrollRangeChanged(self, yrange);
-										if (floor(CustomAlertScrollFrame:GetVerticalScrollRange()) > 0) then
-											self.updated = 1;
-										end
-									</OnScrollRangeChanged>
-								</Scripts>
-								<ScrollChild>
-									<SimpleHTML name="CustomAlertText" hyperlinkFormat="|cff06ff07|H%s|h[%s]|h|r">
-										<Size>
-											<AbsDimension x="300" y="400"/>
-										</Size>
-										<Scripts>
-											<OnHyperlinkClick>
-												LaunchURL(link);
-											</OnHyperlinkClick>
-										</Scripts>
-										<FontString inherits="GlueFontHighlightSmall" spacing="2"/>
-										<FontStringHeader1 inherits="GlueFontNormalLarge" spacing="4"/>
-										<FontStringHeader2 inherits="GlueFontHighlight" spacing="4"/>
-									</SimpleHTML>
-								</ScrollChild>
-							</ScrollFrame>
-						</Frames>
-					</Frame>
-					<!-- ====================================== -->
 					<!-- CAMPOS DE TEXTO: USUARIO Y CONTRASEÑA -->
 					<!-- ====================================== -->
 					<EditBox name="AccountLoginAccountEdit" inherits="GlueDark_EditBoxTemplate" letters="320">
@@ -491,6 +382,9 @@
 											AccountLoginSavePasswordText:Hide();
 											AccountLoginSavePassword:Hide();
 											AccountLoginSavePassword:SetChecked(0);
+											AccountLoginAutoLoginText:Hide();
+											AccountLoginAutoLogin:Hide();
+											AccountLoginAutoLogin:SetChecked(0);
 										end
 									</OnClick>
 								</Scripts>
@@ -565,16 +459,23 @@
             							if savedAccountInfo and savedAccountInfo ~= "" then
                 							local accountName, password, autoLogin = unpack(string_explode(savedAccountInfo, "#&amp;|&amp;#"))
                 							if autoLogin == "1" then
-                    							self:SetChecked(1)
+               							     self:SetChecked(1)
                 							else
-                    							self:SetChecked(0)
+                							    self:SetChecked(0)
                 							end
             							else
-                							self:SetChecked(0)
+            							    self:SetChecked(0)
             							end
 
-            							AccountLoginAutoLoginText:Hide()
-            							self:Hide()
+            							if GetSavedAccountName() == "" then
+                							AccountLoginAutoLoginText:Hide()
+                							self:Hide()
+           							 else
+                							if not AccountLoginSavePassword:GetChecked() then
+                    							AccountLoginAutoLoginText:Hide()
+                    							self:Hide()
+                							end
+            							end
         							</OnLoad>
         							<OnShow>
             							if not AccountLoginSavePassword:GetChecked() then
@@ -599,6 +500,112 @@
 							</CheckButton>
 						</Frames>
 					</Frame>
+					<!-- =======================================  -->
+					<!--     FRAME DE ALERTA PARA EL SERVIDOR     -->
+					<!-- =======================================  -->
+					<Frame name="ServerAlertFrame">
+						<Size>
+							<AbsDimension x="342" y="400"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="10" y="-130"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\tooltips\ui-tooltip-border-mawBlack" tile="true">
+							<BackgroundInsets>
+								<AbsInset left="3" right="3" top="3" bottom="3"/>
+							</BackgroundInsets>
+							<TileSize>
+								<AbsValue val="12"/>
+							</TileSize>
+							<EdgeSize>
+								<AbsValue val="12"/>
+							</EdgeSize>
+						</Backdrop>
+						<Layers>
+							<Layer level="ARTWORK">
+								<FontString name="ServerAlertTitle" inherits="GlueFontNormalLarge" text="SERVER_ALERT_TITLE">
+									<Anchors>
+										<Anchor point="TOP">
+											<Offset>
+												<AbsDimension x="0" y="-20"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
+						<Frames>
+							<ScrollFrame name="ServerAlertScrollFrame" inherits="GlueScrollFrameTemplate">
+								<Size>
+									<AbsDimension x="300" y="340"/>
+								</Size>
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="12" y="-46"/>
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										self.scrollBarHideable = 1;
+										GlueScrollFrame_OnScrollRangeChanged(self);
+									</OnLoad>
+									<OnScrollRangeChanged>
+										GlueScrollFrame_OnScrollRangeChanged(self, yrange);
+										if (floor(ServerAlertScrollFrame:GetVerticalScrollRange()) > 0) then
+											self.updated = 1;
+										end
+									</OnScrollRangeChanged>
+								</Scripts>
+								<ScrollChild>
+									<SimpleHTML name="ServerAlertText" hyperlinkFormat="|cff06ff07|H%s|h[%s]|h|r">
+										<Size>
+											<AbsDimension x="300" y="400"/>
+										</Size>
+										<Scripts>
+											<OnHyperlinkClick>
+												LaunchURL(link);
+											</OnHyperlinkClick>
+										</Scripts>
+										<FontString inherits="GlueFontHighlightSmall" spacing="2"/>
+										<FontStringHeader1 inherits="GlueFontNormalLarge" spacing="4"/>
+										<FontStringHeader2 inherits="GlueFontHighlight" spacing="4"/>
+									</SimpleHTML>
+								</ScrollChild>
+							</ScrollFrame>
+						</Frames>
+					</Frame>
+						<Button name="AccountLoginShowHide" inherits="GlueButtonTemplateBlue" text="INFORMATION">
+    						<Size x="150" y="38"/>
+    						<Anchors>
+    						    <Anchor point="BOTTOMRIGHT">
+    						        <Offset>
+    						            <AbsDimension x="-5" y="150"/>
+    						        </Offset>
+    						    </Anchor>
+    						</Anchors>
+    						<Scripts>
+    						    <OnClick>
+    						        AccountLogin_ToggleServerAlert();
+    						    </OnClick>
+    						</Scripts>
+    						<ButtonText>
+    						    <Anchors>
+    						        <Anchor point="CENTER" relativePoint="CENTER">
+    						            <Offset>
+    						                <AbsDimension x="0" y="2"/>
+    						            </Offset>
+    						        </Anchor>
+    						    </Anchors>
+    						</ButtonText>
+    						<NormalFont style="GlueFontNormalSmall"/>
+    						<HighlightFont style="GlueFontHighlightSmall"/>
+						</Button>
 
 					<Frame name="VirtualKeypadFrame" hidden="true" frameStrata="DIALOG" enableMouse="true">
 						<Size>
@@ -1558,7 +1565,10 @@
 								</Scripts>
 							</Button>
 
-							<Button name="CinematicsCloseButton" parent="CinematicsFrame" inherits="GlueCloseButton">
+							<Button name="CinematicsCloseButton" parent="CinematicsFrame">
+    							<Size>
+        							<AbsDimension x="16" y="16"/>
+    							</Size>
     							<Anchors>
         							<Anchor point="TOPRIGHT" relativeTo="CinematicsBackground">
             							<Offset>
@@ -1566,11 +1576,33 @@
             							</Offset>
         							</Anchor>
     							</Anchors>
+    							<Layers>
+        							<Layer level="OVERLAY">
+            							<FontString name="$parentText" inherits="GameFontNormalLarge">
+                							<Anchors>
+                    							<Anchor point="CENTER"/>
+                							</Anchors>
+            							</FontString>
+        							</Layer>
+    							</Layers>
     							<Scripts>
         							<OnClick>
             							CinematicsFrame:Hide();
         							</OnClick>
+        							<OnEnter>
+            							self.normalTexture:SetVertexColor(1, 0.8, 0.8);
+        							</OnEnter>
+        							<OnLeave>
+            							self.normalTexture:SetVertexColor(1, 1, 1);
+        							</OnLeave>
     							</Scripts>
+    							<NormalTexture name="$parentNormalTexture" parentKey="normalTexture" file="Interface\Glues\Common\redbutton2x">
+        							<TexCoords left="0.15429688" right="0.28320312" top="0.01171875" bottom="0.28515625"/>
+    							</NormalTexture>
+    							<PushedTexture name="$parentPushedTexture" parentKey="pushedTexture" file="Interface\Glues\Common\redbutton2x">
+        							<TexCoords left="0.15429688" right="0.28320312" top="0.30078125" bottom="0.57421875"/>
+    							</PushedTexture>
+    							<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
 							</Button>
 						</Frames>
 					</Frame>
